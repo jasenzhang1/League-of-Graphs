@@ -1,3 +1,5 @@
 venv\Scripts\activate = get into venv
 
-Ctrl+shift+p = change environments
+Ctrl + shift + p = change environments
+
+Ctrl + shift + - = split cells

@@ -1,0 +1,96 @@
+All the tables
+
+https://lol.fandom.com/wiki/Special:CargoTables
+
+Useful to join on OverviewPage (Their individual site pages)
+    - Player (P)
+    - PlayerRedirects (PR)
+
+Player (P)
+    - ID
+    - Age
+    - Birthdate
+    - Name
+    
+https://lol.fandom.com/wiki/Special:CargoTables/PlayerRedirects
+PlayerRedirects (PR)
+    - AllName
+    - OverviewPage (For player)
+    - ID
+
+Tournament Rosters (TR) - 
+    - Team
+    - RosterLinks
+        - Players separated by ;;
+    - Tournament
+    - OverviewPage
+
+Tournaments (T)
+    - DateStart
+    - League 
+        - Organizer (e.g. Riot Games)
+    - Name
+    - StandardName
+    - Split
+    - SplitNumber
+    - OverviewPage (join with TR)
+
+Tournament Players (TP)
+    - Team
+    - Player
+    - OverviewPage
+        - Tournament name (can join)
+    - PageAndTeam
+    - N_PlayerInTeam
+    - TeamOrder
+    - Role
+    - IsDistribution
+
+TournamentResults - useful for prizepool and placement
+
+Teams - has their twitter, discord, instagram, etc...
+
+https://lol.fandom.com/wiki/Special:CargoTables/ScoreboardTeams
+ScoreboardTeams (ST) - End game results 
+    - Team 
+    - Side
+    - Number (in a BO series)
+    - IsWinner
+    - Score (current # of wins in a BO series)
+    - Bans
+    - Picks
+    - Roster
+    - UniqueGame (game ID i guess?)
+    - UniqueTeam (unique team of a unique game)
+    - GameID
+    - MatchID (for BO series)
+    - GameTeamID
+
+https://lol.fandom.com/wiki/Special:CargoTables/ScoreboardPlayers
+ScoreboardPlayers (SP) - Everything there is to know about a player's end game stats
+    - Name (player name)
+    - OverviewPage (Tournament ID)
+    - GameID (Game ID)
+    - MatchID (for BO series)
+    - GameTeamID (some ID)
+
+https://lol.fandom.com/wiki/Special:CargoTables/ScoreboardGames
+ScoreboardGames (SG) - Everything to know about a game 
+    - OverviewPage (Tournament ID)
+    - Gamelength (!!!)
+    - Gamelength Number
+    - Bans, picks, Players
+    - Game stats such as dragons, heralds, barons, gold, towers, etc...
+    - GameID (Game ID)
+    - MatchID (for BO series)
+
+https://lol.fandom.com/wiki/Special:CargoTables/RosterChanges
+RosterChanges (RC) - 
+
+https://lol.fandom.com/wiki/Special:CargoTables/PostgameJsonMetadata
+PostgameJsonMetadata (PJM)
+    - RiotPlatformGameID (Game ID v2)
+    - RiotGameID 
+    - GameID (Game ID)
+    - MatchID (Match ID)
+    - 
