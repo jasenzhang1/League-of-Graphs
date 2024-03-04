@@ -1,0 +1,3 @@
+venv\Scripts\activate = get into venv
+
+Ctrl+shift+p = change environments
