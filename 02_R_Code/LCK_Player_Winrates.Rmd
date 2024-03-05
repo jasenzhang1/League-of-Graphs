@@ -1,0 +1,106 @@
+---
+title: "LCK Player Winrates"
+author: "Jasen"
+date: "2024-03-04"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+make_winrate_figure <- function(df_LCK, league_name){
+  wins <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, function(x){sum(x == 'Yes')})
+  losses <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, function(x){sum(x == 'No')})
+  games <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, length)
+  
+  LCK_wins_losses <- data.frame(wins, losses, games)
+  rownames(LCK_wins_losses) <- names(wins)
+  colnames(LCK_wins_losses) <- c('wins', 'losses', 'games')
+  
+  LCK_wins_losses2 <- LCK_wins_losses %>% filter(games > 10)
+  
+  max_wins <- max(LCK_wins_losses$wins)
+  
+  wr_vec <- c(0.45, 0.5, 0.55, 0.6, 2/3, 0.7)
+  n <- length(wr_vec)
+  wr_df <- data.frame(rep(1,n), rep(1,n))
+  wr_df2 <- data.frame(400 / (1 - wr_vec) - 400, 400 * rep(1,n))
+  colnames(wr_df) <- c('left', 'right')
+  colnames(wr_df2) <- c('left', 'right')
+  
+  wr_df <- rbind(wr_df, wr_df2)
+  wr_df$wr <- rep(wr_vec, 2)
+  
+  losses <- c(0,1, 10,100,400)
+  wins_50 <- losses / (1 - 0.5) - losses
+  wins_60 <- losses / (1 - 0.6) - losses
+  wins_66 <- losses / (1 - 2/3) - losses
+  wins_70 <- losses / (1 - 0.70) - losses
+  
+  df_color <- data.frame(losses, wins_50, wins_60, wins_66, wins_70)
+  
+  LCK_wins_losses_label <- LCK_wins_losses2 %>% mutate(wr = wins/(wins + losses)) %>%
+    arrange(wr) %>% filter(games > 100) %>%
+    filter(wr > 0.5) 
+  
+  LCK_wins_losses_label$name = rownames(LCK_wins_losses_label)
+  
+  # create graph
+  
+  g2 <- ggplot() + geom_point(data = LCK_wins_losses2, aes(x = losses, y = wins)) + 
+    geom_line(aes(x = right, y = left), data = wr_df %>% filter(wr == 0.5), alpha = 0.4) + 
+    geom_line(aes(x = right, y = left), data = wr_df %>% filter(wr == 0.6), alpha = 0.4) +
+    geom_line(aes(x = right, y = left), data = wr_df %>% filter(wr == 2/3), alpha = 0.4) +
+    geom_line(aes(x = right, y = left), data = wr_df %>% filter(wr == 0.7), alpha = 0.4) +
+    geom_ribbon(data = df_color, 
+                aes(x = losses, ymin = wins_50, ymax = wins_60), fill = "blue", alpha = 0.3) +
+    geom_ribbon(data = df_color, 
+                aes(x = losses, ymin = wins_60, ymax = wins_66), fill = "yellow", alpha = 0.3) +
+    geom_ribbon(data = df_color, 
+                aes(x = losses, ymin = wins_66, ymax = wins_70), fill = "red", alpha = 0.3) +
+    geom_text(data = LCK_wins_losses_label, 
+              aes(x = losses, y = wins, label = name), 
+              size = 2, 
+              nudge_x = 5,
+              hjust = 0)
+  
+  g2
+  
+  pic_path <- paste('./../03_Results/01_Career_Winrates/', '.png', sep = league_name)
+  
+  ggsave(pic_path, g2, width = 6, height = 12, dpi = 500)  
+  
+}
+```
+
+# Create graph
+
+```{r}
+df <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_Champions.csv') %>%
+  select(Name, PlayerWin)
+
+df2 <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LCK.csv') %>%
+  select(Name, PlayerWin)
+
+df_LCK <- rbind(df, df2)
+
+make_winrate_figure(df_LCK, 'LCK')
+
+df_LPL <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LPL.csv') %>%
+  select(Name, PlayerWin)
+
+make_winrate_figure(df_LPL, 'LPL')
+
+
+df_LEC <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LEC.csv') %>%
+  select(Name, PlayerWin)
+
+make_winrate_figure(df_LEC, 'LEC')
+
+df_LCS <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LCS.csv') %>%
+  select(Name, PlayerWin)
+
+make_winrate_figure(df_LCS, 'LCS')
+```
