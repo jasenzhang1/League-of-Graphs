@@ -10,7 +10,7 @@ library(tidyverse)
 ```
 
 ```{r}
-make_winrate_figure <- function(df_LCK, league_name){
+make_winrate_figure <- function(df_LCK, league_name, x_lim, label_lim){
   wins <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, function(x){sum(x == 'Yes')})
   losses <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, function(x){sum(x == 'No')})
   games <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, length)
@@ -26,14 +26,14 @@ make_winrate_figure <- function(df_LCK, league_name){
   wr_vec <- c(0.45, 0.5, 0.55, 0.6, 2/3, 0.7)
   n <- length(wr_vec)
   wr_df <- data.frame(rep(1,n), rep(1,n))
-  wr_df2 <- data.frame(400 / (1 - wr_vec) - 400, 400 * rep(1,n))
+  wr_df2 <- data.frame(x_lim / (1 - wr_vec) - x_lim, x_lim * rep(1,n))
   colnames(wr_df) <- c('left', 'right')
   colnames(wr_df2) <- c('left', 'right')
   
   wr_df <- rbind(wr_df, wr_df2)
   wr_df$wr <- rep(wr_vec, 2)
   
-  losses <- c(0,1, 10,100,400)
+  losses <- c(0,1, 10,100,x_lim)
   wins_50 <- losses / (1 - 0.5) - losses
   wins_60 <- losses / (1 - 0.6) - losses
   wins_66 <- losses / (1 - 2/3) - losses
@@ -42,7 +42,7 @@ make_winrate_figure <- function(df_LCK, league_name){
   df_color <- data.frame(losses, wins_50, wins_60, wins_66, wins_70)
   
   LCK_wins_losses_label <- LCK_wins_losses2 %>% mutate(wr = wins/(wins + losses)) %>%
-    arrange(wr) %>% filter(games > 100) %>%
+    arrange(wr) %>% filter(games > label_lim) %>%
     filter(wr > 0.5) 
   
   LCK_wins_losses_label$name = rownames(LCK_wins_losses_label)
@@ -103,4 +103,13 @@ df_LCS <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LCS.csv') %>%
   select(Name, PlayerWin)
 
 make_winrate_figure(df_LCS, 'LCS')
+
+df_INT <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_International.csv') %>%
+  select(Name, PlayerWin)
+make_winrate_figure(df_INT, 'INT', 100, 20)
+
+df_all <- rbind(df_LCK, df_LEC, df_LCS, df_LPL, df_INT)
+
+make_winrate_figure(df_all, 'ALL', 500, 150)
+
 ```
