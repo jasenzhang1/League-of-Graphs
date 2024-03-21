@@ -10,7 +10,7 @@ library(tidyverse)
 ```
 
 ```{r}
-make_winrate_figure <- function(df_LCK, league_name, x_lim, label_lim){
+make_winrate_figure <- function(df_LCK, league_name, x_lim, y_lim, label_lim, nudge_var){
   wins <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, function(x){sum(x == 'Yes')})
   losses <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, function(x){sum(x == 'No')})
   games <- tapply(factor(df_LCK$PlayerWin),df_LCK$Name, length)
@@ -33,7 +33,7 @@ make_winrate_figure <- function(df_LCK, league_name, x_lim, label_lim){
   wr_df <- rbind(wr_df, wr_df2)
   wr_df$wr <- rep(wr_vec, 2)
   
-  losses <- c(0,1, 10,100,x_lim)
+  losses <- 0:x_lim
   wins_50 <- losses / (1 - 0.5) - losses
   wins_60 <- losses / (1 - 0.6) - losses
   wins_66 <- losses / (1 - 2/3) - losses
@@ -42,8 +42,7 @@ make_winrate_figure <- function(df_LCK, league_name, x_lim, label_lim){
   df_color <- data.frame(losses, wins_50, wins_60, wins_66, wins_70)
   
   LCK_wins_losses_label <- LCK_wins_losses2 %>% mutate(wr = wins/(wins + losses)) %>%
-    arrange(wr) %>% filter(games > label_lim) %>%
-    filter(wr > 0.5) 
+    arrange(wr) %>% filter(games > label_lim) 
   
   LCK_wins_losses_label$name = rownames(LCK_wins_losses_label)
   
@@ -63,14 +62,15 @@ make_winrate_figure <- function(df_LCK, league_name, x_lim, label_lim){
     geom_text(data = LCK_wins_losses_label, 
               aes(x = losses, y = wins, label = name), 
               size = 2, 
-              nudge_x = 5,
-              hjust = 0)
+              nudge_x = nudge_var,
+              hjust = 0) + 
+    coord_cartesian(ylim = c(0, y_lim), xlim = c(0,x_lim)) 
   
   g2
   
   pic_path <- paste('./../03_Results/01_Career_Winrates/', '.png', sep = league_name)
   
-  ggsave(pic_path, g2, width = 6, height = 12, dpi = 500)  
+  ggsave(pic_path, g2, width = 6, height = 6*y_lim/x_lim, dpi = 500)  
   
 }
 ```
@@ -91,18 +91,17 @@ make_winrate_figure(df_LCK, 'LCK')
 df_LPL <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LPL.csv') %>%
   select(Name, PlayerWin)
 
-make_winrate_figure(df_LPL, 'LPL')
+make_winrate_figure(df_LPL, 'LPL', 400, 600, 250, 5)
 
 
 df_LEC <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LEC.csv') %>%
   select(Name, PlayerWin)
 
-make_winrate_figure(df_LEC, 'LEC')
+make_winrate_figure(df_LEC, 'LEC', 300, 400, 150, 3)
 
 df_LCS <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_LCS.csv') %>%
   select(Name, PlayerWin)
-
-make_winrate_figure(df_LCS, 'LCS')
+make_winrate_figure(df_LCS, 'LCS', 300, 450, 150, 3)
 
 df_INT <- read_csv('./../Data/Leaguepedia/Scoreboard_Players_International.csv') %>%
   select(Name, PlayerWin)
