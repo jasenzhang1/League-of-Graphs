@@ -1,5 +1,7 @@
 All the tables
 
+https://lol.fandom.com/wiki/Category:Developer_Documentation
+
 https://lol.fandom.com/wiki/Special:CargoTables
 
 Useful to join on OverviewPage (Their individual site pages)

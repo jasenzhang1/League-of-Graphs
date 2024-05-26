@@ -1,5 +1,14 @@
+python -m venv .venv = create venv 
+
 venv\Scripts\activate = get into venv
 
 Ctrl + shift + p = change environments
 
 Ctrl + shift + - = split cells
+
+Ctrl + shirt + ` = new terminal
+
+where = "Name LIKE '%bj%'"
+
+    - filter such that the string has "bj"
+
