@@ -7,6 +7,52 @@ import pandas as pd
 import numpy as np
 site = EsportsClient("lol")
 
+def get_pick_ban_data(Tournament):
+
+    '''
+    Extract information from the ScoreboardGames table
+
+    https://lol.fandom.com/wiki/Special:CargoTables/ScoreboardGames
+    https://lol.fandom.com/wiki/Template:ScoreboardGames/CargoDec
+
+    '''
+
+    df1 = site.cargo_client.query(
+        tables = "ScoreboardGames = SG",
+        fields = "SG.OverviewPage, SG.Tournament, SG.Team1, SG.Team2, SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.N_GameInMatch, SG.N_MatchInTab, SG.N_MatchInPage, SG.MatchId",
+        where = f"Tournament = '{Tournament}'"
+    )
+
+    df1 = pd.DataFrame(df1)
+
+    df1['N MatchInPage'] = df1['N MatchInPage'].astype(int)
+    df1['N GameInMatch'] = df1['N GameInMatch'].astype(int)
+
+    return df1
+
+def get_pick_ban_data2(Tournament):
+
+
+    '''
+    Extract information from the ScoreboardPlayers table
+
+    https://lol.fandom.com/wiki/Special:CargoTables/ScoreboardPlayers
+    https://lol.fandom.com/wiki/Template:ScoreboardPlayers/CargoDec
+    
+    '''
+
+    df1 = site.cargo_client.query(
+        tables = "ScoreboardGames = SG",
+        fields = "SG.OverviewPage, SG.Tournament, SG.Team1, SG.Team2, SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.N_GameInMatch, SG.N_MatchInTab, SG.N_MatchInPage",
+        where = f"Tournament = '{Tournament}'"
+    )
+
+    return pd.DataFrame(df1)
+
+# wow = get_pick_ban_data('LCK Cup 2025')
+
+# wow.to_csv('output.csv', index=False)
+
 def get_tournament_info(Tournament):
 
     '''
