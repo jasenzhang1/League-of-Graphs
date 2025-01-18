@@ -80,7 +80,7 @@ https://lol.fandom.com/wiki/Special:CargoTables/ScoreboardGames
 ScoreboardGames (SG) - Everything to know about a game 
     - OverviewPage (Tournament ID)
     - Gamelength (!!!)
-    - Gamelength Number
+    - Gamelength_Number
     - Bans, picks, Players
     - Game stats such as dragons, heralds, barons, gold, towers, etc...
     - GameID (Game ID)
